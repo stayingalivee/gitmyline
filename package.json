@@ -2,6 +2,7 @@
   "name": "gitmyline",
   "displayName": "gitmyline",
   "description": "",
+  "publisher": "ahmadnoid",
   "icon": "gitmyline-icon.png",
   "version": "0.0.1",
   "engines": {
@@ -42,6 +43,7 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "@vscode/test-electron": "^2.3.0",
+    "esbuild": "^0.19.5",
     "eslint": "^8.36.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
