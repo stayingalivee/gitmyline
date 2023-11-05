@@ -2,6 +2,7 @@
   "name": "gitmyline",
   "displayName": "gitmyline",
   "description": "",
+  "icon": "gitmyline-icon.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.70.0"
