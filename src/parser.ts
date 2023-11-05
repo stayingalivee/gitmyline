@@ -1,45 +1,39 @@
-import { exit } from 'process';
+import { stringify } from 'querystring';
 import * as vscode from 'vscode';
 
 const { exec } = require('child_process');
+const orange = vscode.window.createOutputChannel("Orange");
 
 export function getCursorUpstreamPath() {
-    
-    /*
-        origin	git@github.com:stayingalivee/agileafsozlugu.com.git (fetch)
-        origin	git@github.com:stayingalivee/agileafsozlugu.com.git (push)
+    const folder = <string> vscode.workspace.workspaceFolders?.[0].uri.fsPath.replace("file://", "")
+    const file =  (<string> vscode.window.activeTextEditor?.document.fileName)?.substring(folder.length)
+    const line = (<number> vscode.window.activeTextEditor?.selection.active.line) + 1
 
-        origin	https://github.com/Trendyol/kafka-konsumer.git (fetch)
-        origin	https://github.com/Trendyol/kafka-konsumer.git (push)
-     */
-    exec('git remote -v', (err: any, stdout: any[], stderr: any) => {
-        let str = "origin git@github.com:stayingalivee/agileafsozlugu.com.git (fetch)";
-
-        const url = stdout[0].split(" ")[1];
-        let upstreamUrl = parse(url);  
+    const command = ["(cd", folder, ";", "git remote -v)"].join(" ")
+    exec(command, (err: any, stdout: any, stderr: any) => {
         
-        const line = vscode.window.activeTextEditor?.selection.active.line;
-        const file = vscode.workspace.workspaceFile?.path;
-        
-        upstreamUrl += "/" + file + "#L" + line;
+        const upstreamUrl = parse(stdout.split("\t")[1].split(" ")[0])
+        const upstreamPath = getFullPath(upstreamUrl, file, line)
 
-        copyToClipboard(upstreamUrl);
-        openInBrowser(upstreamUrl);
+        openInBrowser(upstreamPath)
     });
           
 }
 
 function parse(url: string) {
-    url = url.replace("git@", "");
-    url = url.replace(".git", "");
-    url = url.replace(":", "/");
-    return url;
+    return url.replace(":", "/").replace("git@", "https://").replace(".git", "")
 }
 
-function copyToClipboard(url: string) {
-
+function getFullPath(upstreamUrl: string, file: string, line: number) {
+    // TODO: add gitlab support
+    return upstreamUrl += "/blob/main" + file + "#L" + line;
 }
 
 function openInBrowser(url: string) {
-
+    // TODO: add linux and windows support
+    exec('open ' + url, (err: any, stdout: any[], stderr: any) => {
+        console.log(err)    
+        console.log(stdout)    
+        console.log(stderr)    
+    })
 }
