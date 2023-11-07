@@ -6,7 +6,7 @@ did you have to do? you  had to go to your internal version control be it github
 If this frustrates you like it frustrates me then this vscode extenstion is for you! with one click this extension will do all the above and open a new tab on your browser with the the line your cursor is currently at highlighted for you!
 
 ## TODO
-- [ ] add linux support
-- [ ] add windows support
+- [x] add linux support
+- [x] add windows support
 
 **Enjoy!**
