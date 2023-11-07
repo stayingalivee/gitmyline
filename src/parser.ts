@@ -15,8 +15,16 @@ export function getCursorUpstreamPath() {
 
     const command = ["(cd", folder, ";", "git remote -v)"].join(" ")
     exec(command, (err: any, stdout: any, stderr: any) => {
+
+        debugChannel.appendLine("error on executing git remote " + err)
+        debugChannel.appendLine("stdout: " + stdout)
+        debugChannel.appendLine("stderr: " + stderr)
+
         const upstreamProjectUrl = parse(stdout.split("\t")[1].split(" ")[0])
         const upstreamCursorPath = getFullPath(upstreamProjectUrl, file, line)
+
+        debugChannel.appendLine("upstream : " + upstreamProjectUrl)
+        debugChannel.appendLine("upstream line path: " + upstreamCursorPath)
 
         openInBrowser(upstreamCursorPath)
     });
@@ -32,10 +40,32 @@ function getFullPath(upstreamUrl: string, file: string, line: number) {
 }
 
 function openInBrowser(url: string) {
-    // TODO: add linux and windows support
-    exec('open ' + url, (err: any, stdout: any[], stderr: any) => {
-        console.log(err)    
-        console.log(stdout)    
-        console.log(stderr)    
+    debugChannel.appendLine("opening url...")    
+
+    const plat = process.platform.toLowerCase()
+    if(plat == "darwin") {
+        _exec("open", url)
+    }else if(plat == "linux") {
+        _exec("xdg-open", url)
+    }else if(plat == "win32") {
+        _execWithShell("Start-Process", {'shell':'powershell.exe'}, url)
+    }
+
+    debugChannel.appendLine("done.")
+}
+
+function _exec(command: string, url: string) {
+    exec([command, url].join(" "), (err: any, stdout: any, stderr: any) => {
+        debugChannel.appendLine(err)    
+        debugChannel.appendLine(stdout)    
+        debugChannel.appendLine(stderr)    
+    })
+}
+
+function _execWithShell(command: string, shell: Object, url: string) {
+    exec([command, url].join(" "), shell, (err: any, stdout: any, stderr: any) => {
+        debugChannel.appendLine(err)    
+        debugChannel.appendLine(stdout)    
+        debugChannel.appendLine(stderr)    
     })
 }
