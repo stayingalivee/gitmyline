@@ -26,7 +26,8 @@ export function getCursorUpstreamPath() {
         debugChannel.appendLine("upstream : " + upstreamProjectUrl)
         debugChannel.appendLine("upstream line path: " + upstreamCursorPath)
 
-        openInBrowser(upstreamCursorPath)
+        vscode.env.openExternal(vscode.Uri.parse(upstreamCursorPath))
+
     });
 }
 
@@ -47,34 +48,4 @@ function parse(url: string) {
 function getFullPath(upstreamUrl: string, file: string, line: number) {
     const blobPrefix = upstreamUrl.includes("gitlab") ? "/-" : ""
     return upstreamUrl += blobPrefix+ "/blob/main" + file + "#L" + line;
-}
-
-function openInBrowser(url: string) {
-    debugChannel.appendLine("opening url...")    
-
-    const plat = process.platform.toLowerCase()
-    if(plat == "darwin") {
-        _exec("open", url)
-    }else if(plat == "linux") {
-        _exec("xdg-open", url)
-    }else if(plat == "win32") {
-        _execWithShell("Start-Process", {'shell':'powershell.exe'}, url)
-    }
-    
-}
-
-function _exec(command: string, url: string) {
-    exec([command, url].join(" "), (err: any, stdout: any, stderr: any) => {
-        debugChannel.appendLine(err)    
-        debugChannel.appendLine(stdout)    
-        debugChannel.appendLine(stderr)    
-    })
-}
-
-function _execWithShell(command: string, shell: Object, url: string) {
-    exec([command, url].join(" "), shell, (err: any, stdout: any, stderr: any) => {
-        debugChannel.appendLine(err)    
-        debugChannel.appendLine(stdout)    
-        debugChannel.appendLine(stderr)    
-    })
 }
