@@ -31,7 +31,17 @@ export function getCursorUpstreamPath() {
 }
 
 function parse(url: string) {
-    return url.replace(":", "/").replace("git@", "https://").replace(".git", "")
+    
+    // possible remote urls
+    // git@github.com:username/project.git
+    // https://github.com/username/project.git
+    let parsedUrl = url
+
+    if(url.startsWith("git")){
+        parsedUrl = parsedUrl.replace(":", "/").replace("git@", "https://")
+    } 
+
+    return parsedUrl.replace(".git", "")
 }
 
 function getFullPath(upstreamUrl: string, file: string, line: number) {
@@ -50,8 +60,7 @@ function openInBrowser(url: string) {
     }else if(plat == "win32") {
         _execWithShell("Start-Process", {'shell':'powershell.exe'}, url)
     }
-
-    debugChannel.appendLine("done.")
+    
 }
 
 function _exec(command: string, url: string) {
